@@ -1,0 +1,34 @@
+{
+  "name": "pvsaintpe/yii2-pager",
+  "description": "Package",
+  "keywords": [
+    "yii2",
+    "gridview"
+  ],
+  "type": "yii2-extension",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Pavel Veselov",
+      "email": "pvsaintpe@icloud.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0.0",
+    "yiisoft/yii2": "2.0.15.1",
+    "kartik-v/yii2-krajee-base": "*",
+    "kartik-v/yii2-grid": "*",
+    "pvsaintpe/helpers": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "pvsaintpe\\pager\\": ""
+    }
+  },
+  "extra": {
+    "asset-installer-paths": {
+      "npm-asset-library": "vendor/npm",
+      "bower-asset-library": "vendor/bower"
+    }
+  }
+}
