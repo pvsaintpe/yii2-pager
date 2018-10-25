@@ -1,9 +1,13 @@
 <?php
 
-namespace backend\components\pager;
+namespace pvsaintpe\pager;
 
 use kartik\base\AssetBundle;
 
+/**
+ * Class PagerAsset
+ * @package pvsaintpe\pager
+ */
 class PagerAsset extends AssetBundle
 {
     /**

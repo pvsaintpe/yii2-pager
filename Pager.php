@@ -3,6 +3,7 @@
 namespace pvsaintpe\pager;
 
 use Yii;
+use pvsaintpe\helpers\Html;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
 use yii\widgets\LinkPager;
@@ -13,12 +14,24 @@ use yii\widgets\LinkPager;
  */
 class Pager extends LinkPager
 {
+    /**
+     * @var string
+     */
     public $nextPageLabel = '<i class="fa fa-step-forward"></i>';
 
+    /**
+     * @var string
+     */
     public $prevPageLabel = '<i class="fa fa-step-backward"></i>';
 
+    /**
+     * @var string
+     */
     public $firstPageLabel = '<i class="fa fa-fast-backward"></i>';
 
+    /**
+     * @var string
+     */
     public $lastPageLabel = '<i class="fa fa-fast-forward"></i>';
 
     /**
@@ -59,7 +72,12 @@ class Pager extends LinkPager
     }
 
     /**
-     * @inheritdoc
+     * @param string $label
+     * @param int $page
+     * @param string $class
+     * @param bool $disabled
+     * @param bool $active
+     * @return string
      */
     protected function renderPageButton($label, $page, $class, $disabled, $active)
     {
@@ -81,8 +99,7 @@ class Pager extends LinkPager
 
     /**
      * @param $page
-     * @return \yii\widgets\Block
-     * @throws \Exception
+     * @return string
      */
     protected function renderActiveButton($page)
     {
@@ -127,9 +144,11 @@ class Pager extends LinkPager
      */
     protected function renderPageSize()
     {
-        $content = Html::tag('li', Html::tag('span', Yii::t('backend', 'Количество строк')), [
-            'class' => 'not-button'
-        ]);
+        $content = Html::tag(
+            'li',
+            Html::tag('span', Yii::t('backend', 'Количество строк')),
+            ['class' => 'not-button']
+        );
         $url = $this->getUrl($this->pagination->createUrl(0), ['page', 'per-page']);
         $content .= Html::tag('li', Select2::widget([
             'name' => uniqid('pq-'),
