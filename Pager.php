@@ -2,12 +2,12 @@
 
 namespace pvsaintpe\pager;
 
-use kartik\widgets\InputWidget;
 use Yii;
 use pvsaintpe\helpers\Html;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
 use yii\widgets\LinkPager;
+use pvsaintpe\helpers\Url;
 
 /**
  * Class Pager
@@ -62,6 +62,7 @@ class Pager extends LinkPager
 
     /**
      * @inheritdoc
+     * @throws
      */
     public function run()
     {
@@ -105,8 +106,6 @@ class Pager extends LinkPager
 //    protected function renderActiveButton($page)
 //    {
 //        $pageCount = $this->pagination->getPageCount();
-//        $url = $this->getUrl($this->pagination->createUrl(0), ['page']);
-//
 //        return Select2::widget([
 //            'name' => uniqid('p-'),
 //            'value' => $page + 1,
@@ -114,35 +113,14 @@ class Pager extends LinkPager
 //            'options' => [
 //                'multiple' => false,
 //                'class' => $this->pageSelectorClass,
-//                'data-url' => $url,
+//                'data-url' => Url::modify($this->pagination->createUrl(0), ['page']),
 //                'data-page' => $this->pagination->pageParam
 //            ]
 //        ]);
 //    }
 
     /**
-     * @param $url
-     * @param array $attributes
-     * @return string
-     */
-    protected function getUrl($url, $attributes = [])
-    {
-        $urlParts = parse_url($url);
-        $params = [];
-        if (isset($urlParts['query'])) {
-            parse_str($urlParts['query'], $params);
-        }
-        foreach ($attributes as $attribute) {
-            if (isset($params[$attribute])) {
-                unset($params[$attribute]);
-            }
-        }
-        $urlParts['query'] = http_build_query($params);
-        return $urlParts['path'] . '?' . $urlParts['query'];
-    }
-
-    /**
-     * Echo page count
+     * @throws \Exception
      */
     protected function renderPageSize()
     {
@@ -151,7 +129,7 @@ class Pager extends LinkPager
             Html::tag('span', Yii::t('backend', 'Количество строк')),
             ['class' => 'not-button']
         );
-        $url = $this->getUrl($this->pagination->createUrl(0), ['page', 'per-page']);
+        $url = Url::modify($this->pagination->createUrl(0), ['page', 'per-page']);
         $content .= Html::tag('li', Select2::widget([
             'name' => uniqid('pq-'),
             'value' => $this->pagination->getPageSize(),
