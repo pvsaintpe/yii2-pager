@@ -73,51 +73,43 @@ class Pager extends LinkPager
         PagerAsset::register($view);
     }
 
-//    /**
-//     * @param string $label
-//     * @param int $page
-//     * @param string $class
-//     * @param bool $disabled
-//     * @param bool $active
-//     * @return string
-//     */
-//    protected function renderPageButton($label, $page, $class, $disabled, $active)
-//    {
-//        if (!$active) {
-//            return parent::renderPageButton($label, $page, $class, $disabled, $active);
-//        }
-//
-//        // active button
-//        $options = $this->linkContainerOptions;
-//        $linkWrapTag = ArrayHelper::remove($options, 'tag', 'li');
-//        Html::addCssClass($options, empty($class) ? $this->pageCssClass : $class);
-//
-//        Html::addCssClass($options, $this->pageSelectorClass);
-//        $content = $this->renderActiveButton($page);
-//        $this->activePage = $page;
-//
-//        return Html::tag($linkWrapTag, $content, $options);
-//    }
-//
-//    /**
-//     * @param $page
-//     * @return string
-//     */
-//    protected function renderActiveButton($page)
-//    {
-//        $pageCount = $this->pagination->getPageCount();
-//        return Select2::widget([
-//            'name' => uniqid('p-'),
-//            'value' => $page + 1,
-//            'data' => array_combine(range(1, $pageCount), range(1, $pageCount)),
-//            'options' => [
-//                'multiple' => false,
-//                'class' => $this->pageSelectorClass,
-//                'data-url' => Url::modify($this->pagination->createUrl(0), ['page']),
-//                'data-page' => $this->pagination->pageParam
-//            ]
-//        ]);
-//    }
+    /**
+     * @param string $label
+     * @param int $page
+     * @param string $class
+     * @param bool $disabled
+     * @param bool $active
+     * @return string
+     */
+    protected function renderPageButton($label, $page, $class, $disabled, $active)
+    {
+        if (!$active) {
+            return parent::renderPageButton($label, $page, $class, $disabled, $active);
+        }
+
+        // active button
+        $options = $this->linkContainerOptions;
+        $linkWrapTag = ArrayHelper::remove($options, 'tag', 'li');
+        Html::addCssClass($options, empty($class) ? $this->pageCssClass : $class);
+
+        $content = $this->renderActiveButton($page);
+        $this->activePage = $page;
+
+        return Html::tag($linkWrapTag, $content, $options);
+    }
+
+    /**
+     * @param $page
+     * @return string
+     */
+    protected function renderActiveButton($page)
+    {
+        return Html::textInput(uniqid('p-'), $page + 1, [
+            'class' => $this->pageSelectorClass,
+            'data-url' => Url::modify($this->pagination->createUrl(0), ['page']),
+            'data-page' => $this->pagination->pageParam
+        ]);
+    }
 
     /**
      * @throws \Exception

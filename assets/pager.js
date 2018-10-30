@@ -1,5 +1,5 @@
 $(function() {
-    $('body').on('change', 'select.page-selector', function () {
+    $('body').on('change', 'input.page-selector', function () {
         var url = $(this).data('url') + '&page=' + $(this).val();
         var id = $(this).closest('div[data-pjax-container]').attr('id');
         $.pjax({url: url, container: '#' + id});
