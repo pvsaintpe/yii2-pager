@@ -113,6 +113,7 @@ class Pager extends LinkPager
 
     /**
      * @throws \Exception
+     * @return void
      */
     protected function renderPageSize()
     {
