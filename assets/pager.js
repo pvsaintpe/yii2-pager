@@ -1,31 +1,65 @@
 $(function() {
-    $('body').on('change', 'input.page-selector', function () {
-        var url = $(this).data('url') + '&page=' + $(this).val();
-        var container = $(this).closest('div[data-pjax-container]');
-        if (container.length) {
-            $.pjax({url: url, container: '#' + container.attr('id')});
-        } else {
-            location.href = url;
-        }
-    }).on('change', 'select.page-size', function () {
-        var currentPage = $(this).attr('data-page');
-        // console.log('current-page: ', currentPage);
-        var currentPerPage = $(this).attr('data-per-page');
-        // console.log('current-per-page: ', currentPerPage);
-        // console.log('current-page(-1): ', (currentPage - 1));
-        // console.log('current-page(-1)*current-per-page: ', (currentPage - 1) * currentPerPage);
-        // console.log('new-page: ', $(this).val());
-        var calcPage = ((currentPage - 1) * currentPerPage) / $(this).val();
-        // console.log('calc-page: ', calcPage);
-        var page = Math.ceil(calcPage) + 1;
-        // console.log('round-page(+1): ', page);
-        var url = $(this).data('url') + '&page=' + page + '&per-page=' + $(this).val();
-        // console.log('url: ', url);
-        var container = $(this).closest('div[data-pjax-container]');
-        if (container.length) {
-            $.pjax({url: url, container: '#' + container.attr('id')});
-        } else {
-            location.href = url;
-        }
-    });
+
+  $('body').on('click',function (e) {
+    var select = $('.pv_select');
+    if (e.target.className == 'pv_input') {
+      select.css({'display': 'block'});
+    } else{
+      select.css({'display':'none'})
+    }
+  });
+
+
+  $('body').on('click', function (e) {
+    var selectContainer = $('.pv_input');
+    var maxPageSize =  selectContainer.attr('data-max-page');
+    var minPageSize =  selectContainer.attr('data-min-page');
+    var currentPage = selectContainer.val();
+    var number = parseInt(currentPage,10);
+    number = isNaN(number) ? 0 : number;
+
+    if (e.target.classList.contains('addNumber')) {
+      if (number < maxPageSize) {
+        number += 1;
+        selectContainer.val('');
+        selectContainer.val(number);
+      }
+      selectContainer.focus();
+    }
+
+    if (e.target.classList.contains('deductionNumber')) {
+      if (number > minPageSize) {
+        number -= 1;
+        selectContainer.val('');
+        selectContainer.val(number);
+      }
+      selectContainer.focus();
+    }
+  });
+
+
+
+  $('body').keydown(function(e){
+    if (e.keyCode == 13 && e.target.className == 'pv_input') {
+      var selectContainer = $('.pv_input');
+      var maxPageSize = selectContainer.attr('data-max-page');
+      var minPageSize = selectContainer.attr('data-min-page');
+      var pageNumber = selectContainer.val();
+      if (pageNumber > maxPageSize) {
+        pageNumber = maxPageSize
+      } else if (pageNumber < minPageSize) {
+        pageNumber = minPageSize
+      }
+      var url = selectContainer.attr('data-url');
+      url += pageNumber;
+      var container = selectContainer.closest('div[data-pjax-container]');
+      if (container.length) {
+        $.pjax({url: url, container: '#' + container.attr('id')});
+      } else {
+        location.href = url;
+      }
+    }
+  });
+
+
 });

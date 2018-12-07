@@ -6,6 +6,7 @@ use Yii;
 use pvsaintpe\helpers\Html;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
+use yii\helpers\VarDumper;
 use yii\widgets\LinkPager;
 use pvsaintpe\helpers\Url;
 
@@ -15,128 +16,135 @@ use pvsaintpe\helpers\Url;
  */
 class Pager extends LinkPager
 {
-    /**
-     * @var string
-     */
-    public $nextPageLabel = '<i class="fa fa-step-forward"></i>';
+  /**
+   * @var string
+   */
+  public $nextPageLabel = '<i class="fa fa-step-forward"></i>';
 
-    /**
-     * @var string
-     */
-    public $prevPageLabel = '<i class="fa fa-step-backward"></i>';
+  /**
+   * @var string
+   */
+  public $prevPageLabel = '<i class="fa fa-step-backward"></i>';
 
-    /**
-     * @var string
-     */
-    public $firstPageLabel = '<i class="fa fa-fast-backward"></i>';
+  /**
+   * @var string
+   */
+  public $firstPageLabel = '<i class="fa fa-fast-backward"></i>';
 
-    /**
-     * @var string
-     */
-    public $lastPageLabel = '<i class="fa fa-fast-forward"></i>';
+  /**
+   * @var string
+   */
+  public $lastPageLabel = '<i class="fa fa-fast-forward"></i>';
 
-    /**
-     * @var string
-     */
-    public $pageSelectorClass = 'page-selector';
+  /**
+   * @var string
+   */
+  public $pageSelectorClass = 'page-selector';
 
-    /**
-     * @var string
-     */
-    public $pageSizeClass = 'page-size';
+  /**
+   * @var string
+   */
+  public $pageSizeClass = 'page-size';
 
-    /**
-     * @var string
-     */
-    public $pageSizeParam = 'per-page';
+  /**
+   * @var string
+   */
+  public $pageSizeParam = 'per-page';
 
-    /**
-     * @var array
-     */
-    public static $pageSizeList = [5, 10, 20, 50];
+  /**
+   * @var array
+   */
+  public static $pageSizeList = [5, 10, 20, 50];
 
-    /**
-     * @var int
-     */
-    protected $activePage;
+  /**
+   * @var int
+   */
+  public $minPageSize = 0;
 
-    /**
-     * @inheritdoc
-     * @throws
-     */
-    public function run()
-    {
-        parent::run();
-        $this->renderPageSize();
-        // assets
-        $view = $this->getView();
-        PagerAsset::register($view);
+  /**
+   * @var int
+   */
+  public $maxPageSize = 50;
+
+  /**
+   * @var int
+   */
+  protected $activePage;
+
+  /**
+   * @inheritdoc
+   * @throws
+   */
+  public function run()
+  {
+    parent::run();
+    $this->renderPageSize();
+    // assets
+    $view = $this->getView();
+    PagerAsset::register($view);
+  }
+
+  /**
+   * @param string $label
+   * @param int $page
+   * @param string $class
+   * @param bool $disabled
+   * @param bool $active
+   * @return string
+   */
+  protected function renderPageButton($label, $page, $class, $disabled, $active)
+  {
+    if (!$active) {
+      return parent::renderPageButton($label, $page, $class, $disabled, $active);
     }
 
-    /**
-     * @param string $label
-     * @param int $page
-     * @param string $class
-     * @param bool $disabled
-     * @param bool $active
-     * @return string
-     */
-    protected function renderPageButton($label, $page, $class, $disabled, $active)
-    {
-        if (!$active) {
-            return parent::renderPageButton($label, $page, $class, $disabled, $active);
-        }
+    // active button
+    $options = $this->linkContainerOptions;
+    $linkWrapTag = ArrayHelper::remove($options, 'tag', 'li');
+    Html::addCssClass($options, empty($class) ? $this->pageCssClass : $class);
 
-        // active button
-        $options = $this->linkContainerOptions;
-        $linkWrapTag = ArrayHelper::remove($options, 'tag', 'li');
-        Html::addCssClass($options, empty($class) ? $this->pageCssClass : $class);
+    $content = $this->renderActiveButton($page);
+    $this->activePage = $page;
 
-        $content = $this->renderActiveButton($page);
-        $this->activePage = $page;
+    return Html::tag($linkWrapTag, $content, $options);
+  }
 
-        return Html::tag($linkWrapTag, $content, $options);
-    }
+  /**
+   * @param $page
+   * @return string
+   */
+  protected function renderActiveButton($page)
+  {
+    return Html::textInput(uniqid('p-'), $page + 1, [
+      'class' => $this->pageSelectorClass,
+      'data-url' => Url::modify($this->pagination->createUrl(0), ['page']),
+      'data-page' => $this->pagination->pageParam
+    ]);
+  }
 
-    /**
-     * @param $page
-     * @return string
-     */
-    protected function renderActiveButton($page)
-    {
-        return Html::textInput(uniqid('p-'), $page + 1, [
-            'class' => $this->pageSelectorClass,
-            'data-url' => Url::modify($this->pagination->createUrl(0), ['page']),
-            'data-page' => $this->pagination->pageParam
-        ]);
-    }
+  /**
+   * @throws \Exception
+   * @return void
+   */
+  protected function renderPageSize()
+  {
+    $content = Html::tag('span', 'Cтраниц :'.Html::tag('span',
+        $this->pagination->getPageCount(),
+        ['class' => 'pv_count_page_number']),
+      [
+        'class' => 'pv_count_page'
+      ]);
 
-    /**
-     * @throws \Exception
-     * @return void
-     */
-    protected function renderPageSize()
-    {
-        $content = Html::tag(
-            'li',
-            Html::tag('span', Yii::t('backend', 'Количество строк')),
-            ['class' => 'not-button']
-        );
-        $url = Url::modify($this->pagination->createUrl(0), ['page', 'per-page']);
-        $content .= Html::tag('li', Select2::widget([
-            'name' => uniqid('pq-'),
-            'value' => $this->pagination->getPageSize(),
-            'data' => array_combine(static::$pageSizeList, static::$pageSizeList),
-            'options' => [
-                'multiple' => false,
-                'class' => $this->pageSizeClass,
-                'data-url' => $url,
-                'data-page' => $this->pagination->getPage() + 1,
-                'data-per-page' => $this->pagination->getPageSize(),
-                'data-page-size' => $this->pageSizeParam
-            ]
-        ]), ['class' => $this->pageSizeClass]);
-
-        echo Html::tag('ul', $content, ['class' => 'pagination ' . $this->pageSizeClass]);
-    }
+    $content .=  SelectRowCount::widget([
+      'defaultPageSize'=> $this->pagination->getPageSize(),
+      'pageSizeList'=> static::$pageSizeList,
+      'options' => [
+        'data-url' => $url = Url::modify($this->pagination->createUrl(0), ['page', 'per-page']),
+        'data-page' => $this->pagination->getPage() + 1,
+        'minPageSize' => $this->minPageSize,
+        'maxPageSize' => $this->maxPageSize,
+      ]
+    ]);
+    echo Html::tag('div', $content, ['class' =>'pv_select_wrapper']);
+  }
 }
