@@ -19,7 +19,8 @@
     "kartik-v/yii2-krajee-base": "*",
     "kartik-v/yii2-grid": "*",
     "kartik-v/yii2-widgets": "*",
-    "pvsaintpe/yii2-helpers": "*"
+    "pvsaintpe/yii2-helpers": "*",
+    "kartik-v/yii2-widget-touchspin": "*"
   },
   "autoload": {
     "psr-4": {

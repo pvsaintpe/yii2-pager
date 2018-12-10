@@ -1,3 +1,7 @@
+.pagination {
+    display: block;
+}
+
 .page-selector {
     width: 75px !important;
     position: relative;
@@ -32,4 +36,37 @@
     border: none;
     background: inherit;
     color: inherit;
+}
+
+.pv_count_page {
+    float: left;
+    margin: 4px 0 0 10px;
+}
+
+.pv_count_row {
+    float: left;
+    margin: 7px 10px 0 90px;
+}
+
+.pv_count_page_number {
+    margin-left: 5px;
+    font-size: 16px;
+}
+
+.pv_select_block {
+    display: inline-block;
+    position: relative;
+}
+
+.pv_select_wrapper {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+    position: relative;
+}
+
+.spin_wrapper {
+    width: 70px;
+    display: inline-block;
 }

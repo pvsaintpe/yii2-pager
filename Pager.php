@@ -4,10 +4,10 @@ namespace pvsaintpe\pager;
 
 use Yii;
 use pvsaintpe\helpers\Html;
-use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
 use yii\widgets\LinkPager;
 use pvsaintpe\helpers\Url;
+use kartik\widgets\TouchSpin;
 
 /**
  * Class Pager
@@ -54,6 +54,16 @@ class Pager extends LinkPager
      * @var array
      */
     public static $pageSizeList = [5, 10, 20, 50];
+
+    /**
+     * @var int
+     */
+    public $minPageSize = 0;
+
+    /**
+     * @var int
+     */
+    public $maxPageSize = 50;
 
     /**
      * @var int
@@ -117,26 +127,37 @@ class Pager extends LinkPager
      */
     protected function renderPageSize()
     {
-        $content = Html::tag(
-            'li',
-            Html::tag('span', Yii::t('backend', 'Количество строк')),
-            ['class' => 'not-button']
-        );
-        $url = Url::modify($this->pagination->createUrl(0), ['page', 'per-page']);
-        $content .= Html::tag('li', Select2::widget([
-            'name' => uniqid('pq-'),
-            'value' => $this->pagination->getPageSize(),
-            'data' => array_combine(static::$pageSizeList, static::$pageSizeList),
-            'options' => [
-                'multiple' => false,
-                'class' => $this->pageSizeClass,
-                'data-url' => $url,
-                'data-page' => $this->pagination->getPage() + 1,
-                'data-per-page' => $this->pagination->getPageSize(),
-                'data-page-size' => $this->pageSizeParam
+        $content = Html::tag('span',
+            'Cтраниц :' . Html::tag('span',
+                $this->pagination->getPageCount(),
+                ['class' => 'pv_count_page_number']),
+            [
+                'class' => 'pv_count_page'
             ]
-        ]), ['class' => $this->pageSizeClass]);
+        );
+        $content .= Html::tag('span', Yii::t('backend', 'Количество строк'), ['class' => 'pv_count_row']);
 
-        echo Html::tag('ul', $content, ['class' => 'pagination ' . $this->pageSizeClass]);
+        $spin = TouchSpin::widget([
+            'name' => 't6',
+            'options' => [
+                'class' => 'pv_input',
+                'data-url' => Url::toRoute([
+                    '/' . Yii::$app->request->pathInfo,
+                    'page' => $this->pagination->getPage() + 1,
+                    'per-page' => ''
+                ]),
+                'data-max-page' => $this->maxPageSize,
+                'data-min-page' => $this->minPageSize,
+            ],
+            'pluginOptions' => [
+                'verticalbuttons' => true,
+                'min' => $this->minPageSize,
+                'max' => $this->maxPageSize,
+                'initval' => $this->pagination->getPageSize(),
+            ]
+        ]);
+
+        $content .= Html::tag('div', $spin, ['class' => 'spin_wrapper']);
+        echo Html::tag('div', $content, ['class' => 'pv_select_wrapper']);
     }
 }
