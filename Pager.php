@@ -58,7 +58,7 @@ class Pager extends LinkPager
     /**
      * @var int
      */
-    public $minPageSize = 0;
+    public $minPageSize = 1;
 
     /**
      * @var int
