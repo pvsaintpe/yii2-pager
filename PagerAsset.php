@@ -10,6 +10,8 @@ use kartik\base\AssetBundle;
  */
 class PagerAsset extends AssetBundle
 {
+    public $jsOptions = ['defer' => true];
+
     /**
      * @inheritdoc
      */
