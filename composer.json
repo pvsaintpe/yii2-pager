@@ -20,6 +20,7 @@
     "kartik-v/yii2-grid": "*",
     "kartik-v/yii2-widgets": "*",
     "pvsaintpe/yii2-helpers": "*",
+    "pvsaintpe/yii2-touchspin-asset": "*",
     "kartik-v/yii2-widget-touchspin": "*"
   },
   "autoload": {
