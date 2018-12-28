@@ -7,7 +7,8 @@ use pvsaintpe\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\widgets\LinkPager;
 use pvsaintpe\helpers\Url;
-use kartik\widgets\TouchSpin;
+use pvsaintpe\touchspin\TouchSpin;
+
 
 /**
  * Class Pager
@@ -137,15 +138,13 @@ class Pager extends LinkPager
         );
         $content .= Html::tag('span', Yii::t('backend', 'Количество строк'), ['class' => 'pv_count_row']);
 
+        $queryParams = $this->generateUrl();
+
         $spin = TouchSpin::widget([
             'name' => 't6',
             'options' => [
                 'class' => 'pv_input',
-                'data-url' => Url::toRoute([
-                    '/' . Yii::$app->request->pathInfo,
-                    'page' => $this->pagination->getPage() + 1,
-                    'per-page' => ''
-                ]),
+                'data-url' => '/' . Yii::$app->request->pathInfo.'?'.$queryParams,
                 'data-max-page' => $this->maxPageSize,
                 'data-min-page' => $this->minPageSize,
             ],
@@ -159,5 +158,26 @@ class Pager extends LinkPager
 
         $content .= Html::tag('div', $spin, ['class' => 'spin_wrapper']);
         echo Html::tag('div', $content, ['class' => 'pv_select_wrapper']);
+    }
+
+    /**
+     * @return string
+     */
+    public function generateUrl()
+    {
+        $params = [];
+
+        foreach (Yii::$app->request->queryParams as $key => $value) {
+            if ($key == 'page' || $key == 'per-page'){
+                continue;
+            }
+            $params[$key] = $value;
+        }
+
+        $params['page'] = $this->pagination->getPage() + 1;
+        $params['per-page'] = '';
+        $queryParams = http_build_query($params);
+
+        return $queryParams;
     }
 }
